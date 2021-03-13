@@ -72,6 +72,9 @@ async function createServer() {
             );
           }
         }
+        message.react(process.env.CUSTOM_EMOJI_ID!).catch((err) => {
+          serverLogger("non-fatal-error", "Could not find custom emoji", err);
+        });
       }
     }
   });
@@ -86,3 +89,13 @@ async function createServer() {
 }
 
 createServer();
+
+/**
+ * For better development experience
+ */
+process.on("SIGINT", () => {
+  process.exit(0);
+});
+process.on("SIGTERM", () => {
+  process.exit(0);
+});
