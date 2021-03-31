@@ -45,7 +45,7 @@ export const addChannel = async (request: channelPostRequest) => {
       const myId = (await guild?.members.fetch(userId))!.id;
       voicePermissions.push({
         id: myId,
-        allow: ["CONNECT", "STREAM", "SPEAK", "USE_VAD"],
+        allow: ["VIEW_CHANNEL", "CONNECT", "STREAM", "SPEAK", "USE_VAD"],
       });
     });
     await Promise.all(textPromises);
@@ -159,6 +159,7 @@ export const joinChannel = async (
         }
         case "voice": {
           await channel?.updateOverwrite(user?.id, {
+            VIEW_CHANNEL: true,
             CONNECT: true,
             STREAM: true,
             SPEAK: true,

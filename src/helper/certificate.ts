@@ -76,6 +76,17 @@ export async function getCertificateChannelMessage(
           createBasicEmbed(ERRORS.EVENT_DNE, "ERROR")
         );
       }
+      if(!event.enabled){
+        serverLogger(
+          "user-error",
+          incomingMessage.content,
+          "Event Not Enabled"
+        );
+        return incomingMessage.channel.send(
+          `<@${messageType.incomingUser.id}>`,
+          createBasicEmbed(ERRORS.EVENT_DISABLED, "ERROR")
+        );
+      }
       if (!(await setEvent(event))) throw "Cannot set nodeCache Key!";
       await sendReactableMessage(
         incomingMessage,
@@ -111,10 +122,19 @@ export async function generateCertificate(
 ): Promise<Buffer> {
   const certParams = event.certificate;
   let imgObject = await Jimp.read(certParams!.url);
+  let fontPath = join(
+    __dirname,
+    "..",
+    "..",
+    "..",
+    "assets",
+    "font",
+    `${certParams?.font.color}_${certParams?.font.size}`,
+    "font.fnt"
+  );
+  console.log(fontPath);
   imgObject = await imgObject.print(
-    await Jimp.loadFont(
-      join(__dirname, "..", "..", "..", "assets", "font.fnt")
-    ),
+    await Jimp.loadFont(fontPath),
     certParams!.x,
     certParams!.y,
     {
